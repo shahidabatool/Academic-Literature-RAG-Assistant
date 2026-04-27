@@ -5,7 +5,7 @@
 [![LangChain](https://img.shields.io/badge/LangChain-121212?style=flat&logo=Chainlink&logoColor=white)](https://langchain.com/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-00D1B2?style=flat)](https://www.trychroma.com/)
 
-![BPA Research Assistant Header](docs/header.png)
+
 
 > [!NOTE]
 > 🚧 **Work in Progress** — This system is being actively developed as part of **MRP Research at Toronto Metropolitan University**.
