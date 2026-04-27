@@ -26,7 +26,7 @@ if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # Page Configuration
-st.set_page_config(page_title="BPA RAG Research Assistant", page_icon="🩸", layout="wide")
+st.set_page_config(page_title="Academic Literature RAG Assistant", page_icon="🩸", layout="wide")
 
 # --- Custom CSS Theme ---
 st.markdown("""
@@ -102,8 +102,8 @@ st.markdown("""
 # --- Header ---
 st.markdown("""
 <div class="main-header">
-    <h1>🩸 BPA Research Assistant</h1>
-    <div class="subtitle">AI-Powered Bloodstain Pattern Analysis Literature Engine</div>
+    <h1>🩸 Academic Literature RAG Assistant</h1>
+    <div class="subtitle">AI-Powered Forensic Literature Engine</div>
     <div class="badge">RAG + CROSS-ENCODER RERANKING</div>
 </div>
 <div class="skill-chips">
@@ -168,7 +168,7 @@ st.sidebar.divider()
 st.sidebar.markdown("## 💾 Export")
 
 def get_chat_history_text():
-    chat_text = "# BPA Research Assistant - Chat History\n\n"
+    chat_text = "# Academic Literature RAG Assistant - Chat History\n\n"
     if "messages" in st.session_state:
         for msg in st.session_state["messages"]:
             role = "👤 USER" if msg["role"] == "user" else "🤖 ASSISTANT"

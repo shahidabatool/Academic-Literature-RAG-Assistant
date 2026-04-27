@@ -1,20 +1,18 @@
-# 🩸 BPA Research Assistant
+# Academic Literature RAG Assistant
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat&logo=Streamlit&logoColor=white)](https://streamlit.io/)
 [![LangChain](https://img.shields.io/badge/LangChain-121212?style=flat&logo=Chainlink&logoColor=white)](https://langchain.com/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-00D1B2?style=flat)](https://www.trychroma.com/)
 
-
-
 > [!NOTE]
 > 🚧 **Work in Progress** — This system is being actively developed as part of **MRP Research at Toronto Metropolitan University**.
 
 ## 📚 Multi-Provider Literature RAG Chatbot
 
-The **BPA Research Assistant** is a flexible Retrieval-Augmented Generation (RAG) engine that allows researchers to choose their preferred LLM provider — **OpenAI, Google Gemini, Anthropic Claude, Mistral, or Groq (Llama 3.3-70b)** — all from a single interface. 
+The **Academic Literature RAG Assistant** is a flexible Retrieval-Augmented Generation (RAG) engine that allows researchers to choose their preferred LLM provider — **OpenAI, Google Gemini, Anthropic Claude, Mistral, or Groq (Llama 3.3-70b)** — all from a single interface. 
 
-Built with **LangChain**, **ChromaDB**, and **HuggingFace Embeddings (Nomic-AI)**, it provides a robust framework for querying complex forensic literature. The system supports multiple document formats (PDF, DOCX, XLSX, and PPTX) and features an interactive Streamlit interface for seamless document analysis and conversational Q&A.
+Built with **LangChain**, **ChromaDB**, and **HuggingFace Embeddings (Nomic-AI)**, it provides a robust framework for querying complex forensic literature, specifically optimized for **Bloodstain Pattern Analysis (BPA)**. The system supports multiple document formats (PDF, DOCX, XLSX, and PPTX) and features an interactive Streamlit interface for seamless document analysis and conversational Q&A.
 
 ### 🌟 Key Features
 
@@ -33,7 +31,7 @@ Built with **LangChain**, **ChromaDB**, and **HuggingFace Embeddings (Nomic-AI)*
 ## 🛠️ Project Structure
 
 ```text
-Task_3_RAG_System/
+Academic-Literature-RAG-Assistant/
 ├── Code/
 │   ├── streamlit_app.py        # Main UI and RAG logic
 │   ├── build_vector_db.py      # PDF ingestion & ChromaDB builder
@@ -42,8 +40,8 @@ Task_3_RAG_System/
 │   ├── *.pdf                   # Source forensic literature
 │   └── chroma_db/              # Persistent vector store
 ├── outputs/                    # Generated reports & infographics
-├── docs/                       # Project documentation & assets
-└── requirements.txt            # Python dependencies
+├── requirements.txt            # Python dependencies
+└── LICENSE                     # MIT License
 ```
 
 ---
@@ -52,8 +50,8 @@ Task_3_RAG_System/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/bpa-research-assistant.git
-cd bpa-research-assistant
+git clone https://github.com/shahidabatool/Academic-Literature-RAG-Assistant.git
+cd Academic-Literature-RAG-Assistant
 ```
 
 ### 2. Install Dependencies
