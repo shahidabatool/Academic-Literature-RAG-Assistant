@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Project specific
+outputs/
+Text/chroma_db/
+
+# Large files (GitHub limit is 100MB)
+Text/*.pdf
+
+# OS
+.DS_Store
