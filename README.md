@@ -14,17 +14,16 @@ The **Academic Literature RAG Assistant** is a flexible Retrieval-Augmented Gene
 
 Built with **LangChain**, **ChromaDB**, and **HuggingFace Embeddings (Nomic-AI)**, it provides a robust framework for querying complex forensic literature, specifically optimized for **Bloodstain Pattern Analysis (BPA)**. The system supports multiple document formats (PDF, DOCX, XLSX, and PPTX) and features an interactive Streamlit interface for seamless document analysis and conversational Q&A.
 
-### 🌟 Key Features
-
-- **🧠 Multi-Engine RAG**: Seamlessly switch between top-tier LLMs including **Groq (Llama 3)**, **Gemini 2.0**, **GPT-4o**, **Mistral**, and **Claude** to compare reasoning and outputs.
-- **📄 Research Automation & Synthesis**: Beyond simple Q&A, the system synthesizes data across multiple papers to provide comprehensive overviews and thematic summaries.
+- **🖼️ Multimodal RAG Integration**: Utilizing **OpenAI CLIP**, the system can retrieve and display relevant figures, diagrams, and images directly from forensic papers alongside text answers.
+- **🎨 Cinematic Infographics**: Automated generation of high-fidelity, **dark-mode research infographics** with glassmorphism effects and custom AI-generated forensic illustrations.
+- **🛡️ Source Transparency**: Every response includes a **verified source list**, mapping AI findings directly to specific PDF filenames for total traceability.
 - **🛠️ Multi-Format Export Suite**: Convert literature insights directly into professional assets:
+    - **📸 PNG/JPEG Export**: High-resolution image downloads for infographics using **Playwright**.
     - **📑 Excel Sheets**: Structured data extraction for meta-analyses.
     - **📝 Word Reports**: Detailed academic or investigative reports.
     - **📋 PowerPoint Presentations**: Automated slide generation for research briefings.
-    - **📊 Interactive Infographics**: High-fidelity visual summaries of forensic topics.
 - **📈 Real-time Data Visualization**: Automatic extraction of experimental metrics and statistics rendered as interactive **Apache ECharts**.
-- **🔎 Advanced Forensic Retrieval**: Hyper-accurate search utilizing **Cross-Encoder Reranking** and **Metadata Filtering** to find the needle in the haystack.
+- **🔎 Advanced Forensic Retrieval**: Hyper-accurate search utilizing **Cross-Encoder Reranking** and **HyDE (Hypothetical Document Embeddings)** to find the needle in the haystack.
 
 ---
 
@@ -90,6 +89,8 @@ streamlit run Code/streamlit_app.py
 - **Vector Store**: [ChromaDB](https://www.trychroma.com/) for efficient similarity search.
 - **Embeddings**: `nomic-ai/nomic-embed-text-v1.5` for high-dimensional text representation.
 - **Reranker**: `cross-encoder/ms-marco-MiniLM-L-6-v2` for optimizing retrieval relevance.
+- **Multimodal Engine**: [OpenAI CLIP](https://github.com/openai/CLIP) for semantic figure & image retrieval.
+- **Rendering Engine**: [Playwright](https://playwright.dev/) for high-resolution PNG/JPEG infographic export.
 - **Frontend**: [Streamlit](https://streamlit.io/) for a responsive, forensic-themed dashboard.
 - **Execution**: Dynamic Python code execution for on-the-fly file generation.
 
