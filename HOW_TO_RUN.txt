@@ -1,0 +1,19 @@
+# How to Run the RAG Assistant
+
+To avoid "ModuleNotFoundError" or "ImportError", always use the project's virtual environment.
+
+### Option 1: Direct Command (Easiest)
+Run this command from the project root directory:
+./venv/bin/streamlit run Code/streamlit_app.py
+
+### Option 2: Activate Environment (Recommended for Development)
+1. Activate the environment:
+   source venv/bin/activate
+2. Run the app:
+   streamlit run Code/streamlit_app.py
+
+### Troubleshooting
+If you see an error about "langchain_groq" or any other module:
+1. Ensure you are in the correct directory.
+2. Run: ./venv/bin/pip install -r requirements.txt
+3. Try Option 1 again.

@@ -58,28 +58,9 @@ def get_emoji(heading):
     return TOPIC_EMOJIS["default"]
 
 
-def build_infographic_html(data):
+def build_infographic_html(data, hero_img_path=None):
     """
-    Build a premium HTML infographic from structured JSON data.
-    
-    Expected data format:
-    {
-        "title": "Paper Title",
-        "authors": "Author names",
-        "hero_steps": ["Step 1", "Step 2", ...],
-        "sections": [
-            {
-                "heading": "Section Title",
-                "points": ["point 1", "point 2", ...],
-                "stat": "94%",           # optional
-                "stat_label": "Accuracy"  # optional
-            }
-        ],
-        "bottom_stats": [
-            {"value": "94%", "label": "Accuracy"},
-            ...
-        ]
-    }
+    Build a premium dark-mode HTML infographic from structured JSON data.
     """
     title = data.get("title", "Bloodstain Pattern Analysis")
     authors = data.get("authors", "")
@@ -87,11 +68,21 @@ def build_infographic_html(data):
     sections = data.get("sections", [])
     bottom_stats = data.get("bottom_stats", [])
     
+    # Hero Image handling (base64 or direct)
+    hero_style = ""
+    if hero_img_path:
+        import base64
+        try:
+            with open(hero_img_path, "rb") as f:
+                img_data = base64.b64encode(f.read()).decode()
+                hero_style = f'background-image: url("data:image/png;base64,{img_data}");'
+        except:
+            pass
+
     # Filter out obviously hallucinated/default stats
     filtered_stats = []
     for s in bottom_stats:
         val = str(s.get("value", ""))
-        # Skip if it's just a default year or empty
         if val not in ["2025", "2026", "N/A", "", "null", "None"]:
             filtered_stats.append(s)
     bottom_stats = filtered_stats[:3]
@@ -105,12 +96,11 @@ def build_infographic_html(data):
         if i < len(hero_steps) - 1:
             hero_html += '<span class="arrow">→</span>'
     
-    # Split sections into two groups
+    # Split sections into groups
     mid = max(len(sections) // 2, 1)
     group1 = sections[:mid]
     group2 = sections[mid:]
     
-    # Build cards
     def build_card(section, idx, global_idx):
         color = CARD_COLORS[global_idx % len(CARD_COLORS)]
         emoji = get_emoji(section.get("heading", ""))
@@ -119,28 +109,24 @@ def build_infographic_html(data):
         stat = section.get("stat")
         stat_label = section.get("stat_label", "")
         
-        # Filter out null/None stats
-        if stat in [None, "null", "None", "N/A", ""]:
-            stat = None
+        if stat in [None, "null", "None", "N/A", ""]: stat = None
         
         points_html = ""
         for p in points:
             pt_emoji = get_emoji(p)
-            points_html += f'''<li style="border-left-color: {color['border']};">
-                <span class="bullet-emoji">{pt_emoji}</span> {p}
-            </li>'''
+            points_html += f'<li><span class="bullet-emoji">{pt_emoji}</span> {p}</li>'
         
         stat_html = ""
         if stat:
             stat_html = f'''
-            <div class="stat-badge" style="background: {color['accent']}15;">
-                <div class="stat-value" style="color: {color['accent']};">{stat}</div>
-                <div class="stat-label" style="color: {color['accent']}99;">{stat_label}</div>
+            <div class="stat-badge" style="background: rgba(255,255,255,0.05); border: 1px solid {color['border']}50;">
+                <div class="stat-value" style="color: {color['border']};">{stat}</div>
+                <div class="stat-label" style="color: rgba(255,255,255,0.5);">{stat_label}</div>
             </div>'''
         
         return f'''
-        <div class="card" style="background: {color['bg']}; border-top: 4px solid {color['border']};">
-            <h3 style="color: {color['accent']};">{emoji} {heading}</h3>
+        <div class="card" style="background: rgba(30, 41, 59, 0.7); border-left: 4px solid {color['border']};">
+            <h3 style="color: {color['border']};">{emoji} {heading}</h3>
             <ul>{points_html}</ul>
             {stat_html}
         </div>'''
@@ -148,20 +134,17 @@ def build_infographic_html(data):
     cards_group1 = "\n".join(build_card(s, i, i) for i, s in enumerate(group1))
     cards_group2 = "\n".join(build_card(s, i, i + mid) for i, s in enumerate(group2))
     
-    # Bottom stats bar
     stats_html = ""
-    stat_accents = ["#E65100", "#0D47A1", "#2E7D32"]
+    stat_colors = ["#F59E0B", "#3B82F6", "#10B981"]
     for i, s in enumerate(bottom_stats):
-        accent = stat_accents[i % len(stat_accents)]
+        color = stat_colors[i % len(stat_colors)]
         stats_html += f'''
         <div class="bottom-stat">
-            <div class="bottom-stat-value" style="color: {accent};">{s.get("value", "")}</div>
+            <div class="bottom-stat-value" style="color: {color};">{s.get("value", "")}</div>
             <div class="bottom-stat-label">{s.get("label", "")}</div>
         </div>'''
     
     bottom_bar_html = f'<div class="bottom-bar">{stats_html}</div>' if stats_html else ""
-    
-    # Count sections for the section counter badge
     section_count = len(sections)
     
     html = f'''<!DOCTYPE html>
@@ -169,266 +152,200 @@ def build_infographic_html(data):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 
 body {{
-    font-family: 'Inter', -apple-system, sans-serif;
-    background: #f0f4f8;
-    background-image: radial-gradient(circle, #d5d8dc 0.8px, transparent 0.8px);
-    background-size: 16px 16px;
-    padding: 50px 16px 60px;
+    font-family: 'Outfit', sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 40px 16px;
     -webkit-font-smoothing: antialiased;
 }}
 
 .container {{
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(15, 23, 42, 0.8);
     backdrop-filter: blur(20px);
-    border-radius: 28px;
-    box-shadow: 
-        0 4px 6px rgba(0,0,0,0.02),
-        0 12px 24px rgba(0,0,0,0.04),
-        0 24px 48px rgba(0,0,0,0.06);
-    padding: 52px 36px 36px;
-    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }}
 
-/* ─── Header ─── */
-.header {{
-    text-align: center;
-    margin-bottom: 28px;
-    padding-bottom: 24px;
-    border-bottom: 2px solid #f0f0f0;
+/* ─── Hero Banner ─── */
+.hero-banner {{
+    height: 400px;
+    {hero_style}
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 40px;
 }}
-.header h1 {{
-    font-size: 1.85em;
-    font-weight: 900;
-    color: #0f172a;
-    line-height: 1.25;
-    margin-bottom: 10px;
-    letter-spacing: -0.5px;
+.hero-banner::after {{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #0f172a 0%, transparent 100%);
 }}
-.header .authors {{
-    font-size: 0.95em;
-    color: #64748b;
-    font-style: italic;
+.hero-content {{
+    position: relative;
+    z-index: 10;
+}}
+.hero-banner h1 {{
+    font-size: 2.5em;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}}
+.hero-banner .authors {{
+    font-size: 1.1em;
+    color: #94a3b8;
     font-weight: 400;
-}}
-.section-count {{
-    display: inline-block;
-    margin-top: 10px;
-    padding: 4px 14px;
-    background: #f1f5f9;
-    border-radius: 20px;
-    font-size: 0.75em;
-    font-weight: 600;
-    color: #64748b;
-    letter-spacing: 0.5px;
 }}
 
 /* ─── Hero Flow ─── */
-.hero {{
+.flow-container {{
+    padding: 24px 40px;
+    background: rgba(30, 41, 59, 0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}}
+.hero-flow {{
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
-    padding: 16px 20px;
-    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-    border-radius: 16px;
-    margin-bottom: 24px;
-    border: 1px solid #e2e8f0;
 }}
 .pill {{
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 8px 16px;
-    background: white;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.05);
     border-radius: 50px;
-    font-size: 0.78em;
+    font-size: 0.8em;
     font-weight: 600;
-    color: #1e293b;
-    white-space: nowrap;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    border: 1.5px solid #e2e8f0;
-    transition: transform 0.15s;
+    border: 1px solid rgba(255,255,255,0.1);
 }}
-.arrow {{
-    font-size: 1em;
-    color: #94a3b8;
-    flex-shrink: 0;
-    font-weight: 300;
-}}
+.arrow {{ color: #475569; font-weight: 300; }}
 
-/* ─── Section Bands ─── */
+/* ─── Grid ─── */
+.content-area {{ padding: 32px 40px; }}
 .band {{
+    font-size: 0.75em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #64748b;
+    margin: 32px 0 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 0.82em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin: 24px 0 16px 0;
+    gap: 12px;
 }}
-.band::before {{
+.band::after {{
     content: '';
-    width: 4px;
-    height: 20px;
-    border-radius: 2px;
-    flex-shrink: 0;
+    height: 1px;
+    flex-grow: 1;
+    background: rgba(255,255,255,0.05);
 }}
-.band-1 {{ 
-    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-    color: #92400E;
-}}
-.band-1::before {{ background: #F59E0B; }}
-.band-2 {{ 
-    background: linear-gradient(135deg, #CFFAFE, #A5F3FC);
-    color: #155E75;
-}}
-.band-2::before {{ background: #06B6D4; }}
 
-/* ─── Card Grid ─── */
 .grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 20px;
 }}
 
 .card {{
-    border-radius: 16px;
-    padding: 20px 22px;
-    min-height: 160px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    border: 1px solid rgba(0,0,0,0.04);
-    position: relative;
-    overflow: hidden;
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.03);
 }}
-.card::after {{
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 80px;
-    height: 80px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 0 0 0 80px;
-    pointer-events: none;
-}}
-
 .card h3 {{
-    font-size: 0.82em;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 12px;
-    line-height: 1.3;
+    font-size: 0.9em;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }}
-
-.card ul {{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}}
+.card ul {{ list-style: none; }}
 .card li {{
-    padding: 5px 0 5px 12px;
-    border-left: 2.5px solid #ddd;
-    margin-bottom: 4px;
-    font-size: 0.8em;
-    color: #374151;
-    line-height: 1.45;
-    font-weight: 400;
-}}
-.bullet-emoji {{
-    margin-right: 3px;
     font-size: 0.85em;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
 }}
+.bullet-emoji {{ opacity: 0.8; }}
 
-/* ─── Stat Badge ─── */
 .stat-badge {{
-    margin-top: 14px;
-    padding: 12px 16px;
+    margin-top: 20px;
+    padding: 12px;
     border-radius: 12px;
     text-align: center;
 }}
-.stat-value {{
-    font-size: 2em;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -1px;
-}}
-.stat-label {{
-    font-size: 0.65em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-top: 3px;
-}}
+.stat-value {{ font-size: 1.8em; font-weight: 800; }}
+.stat-label {{ font-size: 0.6em; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }}
 
-/* ─── Bottom Stats Bar ─── */
+/* ─── Bottom Bar ─── */
 .bottom-bar {{
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    background: linear-gradient(135deg, #1e293b, #334155);
-    border-radius: 16px;
-    padding: 28px 20px;
-    margin-top: 24px;
+    justify-content: space-around;
+    padding: 40px;
+    background: rgba(2, 6, 23, 0.5);
+    border-top: 1px solid rgba(255,255,255,0.05);
 }}
-.bottom-stat {{
-    text-align: center;
-}}
-.bottom-stat-value {{
-    font-size: 2.4em;
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -1px;
-}}
-.bottom-stat-label {{
-    font-size: 0.65em;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #94a3b8;
-    margin-top: 5px;
-}}
+.bottom-stat {{ text-align: center; }}
+.bottom-stat-value {{ font-size: 2.2em; font-weight: 800; margin-bottom: 4px; }}
+.bottom-stat-label {{ font-size: 0.65em; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 2px; }}
 
 .footer {{
+    padding: 24px;
     text-align: center;
-    margin-top: 20px;
-    font-size: 0.7em;
-    color: #94a3b8;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    font-size: 0.65em;
+    color: #475569;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }}
 </style>
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <h1>{title}</h1>
-        <p class="authors">by {authors}</p>
-        <div class="section-count">📄 {section_count} SECTIONS EXTRACTED</div>
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1>{title}</h1>
+            <p class="authors">by {authors}</p>
+        </div>
     </div>
     
-    <div class="hero">{hero_html}</div>
+    <div class="flow-container">
+        <div class="hero-flow">{hero_html}</div>
+    </div>
     
-    <div class="band band-1">📋 Methodology &amp; Classification</div>
-    <div class="grid">{cards_group1}</div>
-    
-    <div class="band band-2">📊 Results &amp; Conclusions</div>
-    <div class="grid">{cards_group2}</div>
+    <div class="content-area">
+        <div class="band">Forensic Methodology</div>
+        <div class="grid">{cards_group1}</div>
+        
+        <div class="band">Research Findings</div>
+        <div class="grid">{cards_group2}</div>
+    </div>
     
     {bottom_bar_html}
     
-    <div class="footer">GENERATED BY BPA RAG RESEARCH ASSISTANT</div>
+    <div class="footer">
+        Generated by BPA RAG Assistant • {section_count} Data Points Analyzed
+    </div>
 </div>
 </body>
 </html>'''

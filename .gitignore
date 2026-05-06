@@ -8,6 +8,8 @@ venv/
 # Project specific
 outputs/
 Text/chroma_db/
+Text/chroma_image_db/
+Text/chroma_db_image/
 
 # Large files (GitHub limit is 100MB)
 Text/*.pdf

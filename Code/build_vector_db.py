@@ -175,5 +175,14 @@ def main():
     )
     print(f"Database successfully saved to {CHROMA_PATH}! Ready for RAG.")
 
+    # --- NEW: Extract and Embed Images with CLIP ---
+    print("\n--- Starting Multimodal Image Extraction ---")
+    try:
+        import multimodal_processor
+        multimodal_processor.process_pdfs()
+        print("Multimodal processing complete.")
+    except Exception as e:
+        print(f"Multimodal processing failed: {e}")
+
 if __name__ == "__main__":
     main()
